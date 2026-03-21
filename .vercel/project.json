@@ -1,0 +1,12 @@
+{
+  "orgId": "your-org-id",
+  "projectId": "your-project-id",
+  "settings": {
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "framework": "vue",
+    "installCommand": "npm install",
+    "devCommand": "npm run dev",
+    "nodeVersion": "18.x"
+  }
+}
