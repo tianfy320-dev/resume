@@ -136,6 +136,23 @@
                   </div>
                 </div>
               </div>
+
+              <div class="card result-card">
+                <div class="section-title">
+                  <span class="section-icon">💬</span>
+                  打招呼话术
+                </div>
+                <div class="greeting-content">
+                  <div 
+                    v-for="(line, index) in result.greetingMessage.split('\n').filter(line => line.trim())" 
+                    :key="index"
+                    class="greeting-item"
+                  >
+                    <span class="item-icon">💭</span>
+                    {{ line }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -391,6 +408,26 @@ async function handleAnalyze() {
   0%, 20% { content: '.'; }
   40% { content: '..'; }
   60%, 100% { content: '...'; }
+}
+
+.greeting-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.greeting-item {
+  padding: 12px 16px;
+  background: linear-gradient(145deg, var(--baby-blue-light), var(--baby-blue));
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  line-height: 1.4;
+  transition: transform 0.2s ease;
+}
+
+.greeting-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-pressed);
 }
 
 @media (max-width: 1024px) {

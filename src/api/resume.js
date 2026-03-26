@@ -2,10 +2,11 @@ function parseDeepSeekResponse(content) {
   const result = {
     diagnosis: [],
     optimizedResume: '',
-    matchSuggestions: []
+    matchSuggestions: [],
+    greetingMessage: ''
   }
   
-  const diagnosisMatch = content.match(/【问题诊断】[:：]?\s*([\s\S]*?)(?=【优化后的简历内容】|【职位匹配建议】|$)/)
+  const diagnosisMatch = content.match(/【问题诊断】[:：]?\s*([\s\S]*?)(?=【优化后的简历内容】|【职位匹配建议】|【打招呼话术】|$)/)
   if (diagnosisMatch) {
     const diagnosisText = diagnosisMatch[1].trim()
     const diagnosisItems = diagnosisText.split(/\n/).filter(line => line.trim()).map(line => {
@@ -18,12 +19,12 @@ function parseDeepSeekResponse(content) {
     result.diagnosis = diagnosisItems.length > 0 ? diagnosisItems : [{ type: 'info', content: '暂无问题诊断' }]
   }
   
-  const resumeMatch = content.match(/【优化后的简历内容】[:：]?\s*([\s\S]*?)(?=【职位匹配建议】|$)/)
+  const resumeMatch = content.match(/【优化后的简历内容】[:：]?\s*([\s\S]*?)(?=【职位匹配建议】|【打招呼话术】|$)/)
   if (resumeMatch) {
     result.optimizedResume = resumeMatch[1].trim()
   }
   
-  const suggestionMatch = content.match(/【职位匹配建议】[:：]?\s*([\s\S]*?)$/)
+  const suggestionMatch = content.match(/【职位匹配建议】[:：]?\s*([\s\S]*?)(?=【打招呼话术】|$)/)
   if (suggestionMatch) {
     const suggestionText = suggestionMatch[1].trim()
     const suggestionItems = suggestionText.split(/\n/).filter(line => line.trim()).map(line => {
@@ -37,6 +38,11 @@ function parseDeepSeekResponse(content) {
       return { type, content: cleanLine }
     }).filter(item => item.content)
     result.matchSuggestions = suggestionItems.length > 0 ? suggestionItems : [{ type: 'info', content: '暂无匹配建议' }]
+  }
+  
+  const greetingMatch = content.match(/【打招呼话术】[:：]?\s*([\s\S]*?)$/)
+  if (greetingMatch) {
+    result.greetingMessage = greetingMatch[1].trim()
   }
   
   return result
@@ -80,7 +86,14 @@ ${jobDescription}
 2. 指出优势和不足
 3. 给出针对性的投递建议
 
-请确保返回格式严格按照上述三个板块，使用【】标记板块标题。`
+【打招呼话术】：
+根据岗位JD和用户身份，生成3-5条专业的打招呼话术，用于投递简历时的邮件正文或消息开头。话术应该：
+1. 简洁专业，表达对职位的兴趣
+2. 突出与岗位相关的核心技能或经验
+3. 适合邮件或消息发送的场景
+4. 每条话术独立成行
+
+请确保返回格式严格按照上述四个板块，使用【】标记板块标题。`
 
   try {
     const response = await fetch(apiEndpoint, {
